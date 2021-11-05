@@ -1,21 +1,33 @@
 Vue.component('movies-comp',{
   template: `
-    <div>
-      <h1>Pelculas</h1>
-      <Movies v-for="(movie, key) in movies"
-        :key="key"
-        :id="movie.id"
-        :title="movie.title"
-        :synopsis="movie.synopsis"
-        :cover="movie.cover"
-        :like="movie.like"
-        @toggleLike="onToggleLike"
-      />
-      <MoviesFav v-if="showFav" @hideFav="onHideFav"/>
+    <div class="container">
+      <h5>Bienvenido {{user}}</h5>
+      <h2>Peliculas</h2>
+      <div class="row">
+        <div class="col-12 col-md-6 col-lg-4" v-for="(movie, key) in movies">
+          <Movies 
+            :key="key"
+            :id="movie.id"
+            :title="movie.title"
+            :synopsis="movie.synopsis"
+            :cover="movie.cover"
+            :like="movie.like"
+            @toggleLike="onToggleLike"
+          />
+        </div>
+      </div>
+      <label>
+        Cambiar Nombre
+        <input :value="user" @change="setNewUser"/>
+      </label>
+      {{oldUser}}
+      <MoviesFav :show.sync="showFav"/>
     </div>
   `,
   data(){
     return {
+      user: 'Franco',
+      oldUser: null,
       movies: [
         {
           id: 1,
@@ -45,17 +57,23 @@ Vue.component('movies-comp',{
     Movies,
     MoviesFav,
   },
+  watch:{
+    user(newVal, oldVal){
+      console.log(newVal, oldVal)
+      this.oldUser = oldVal
+    }
+  },
   methods:{
+    setNewUser(event){
+      this.user = event.target.value
+    },
     onToggleLike(data){
       let movieLike = this.movies.find(movie => movie.id === data.id)
       movieLike.like = data.like
-      this.showFav = data.like
-      setTimeout(() => {
-        this.showFav = false
-      }, 1000) 
+      //this.showFav = data.like //comento esto para usar $parent en Movie.js
     },
-    onHideFav(show){
+    /* onHideFav(show){
       this.showFav = show
-    }
+    } */
   }
 }) 
